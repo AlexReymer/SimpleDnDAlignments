@@ -30,11 +30,10 @@ local alignmentsTable = {
 local selectedAlignmentId = "none"
 
 local function createAlignmentTooltip()
-    if selectedAlignmentId == "none" then
+    if tes3.player.data.ctheloAlignments == nil then
         return
     end
-
-    local selectedAlignment = alignmentsTable[selectedAlignmentId]
+    local selectedAlignment = tes3.player.data.ctheloAlignments.alignment
 
     local tooltip = tes3ui.createTooltipMenu()
     local outerBlock = tooltip:createBlock()
@@ -64,10 +63,10 @@ local function createAlignmentTooltip()
 end
 
 local function updateAlignmentStat()
-    if selectedAlignmentId == "none" then
+    if tes3.player.data.ctheloAlignments == nil then
         return
     end
-    local selectedAlignment = alignmentsTable[selectedAlignmentId]
+    local selectedAlignment = tes3.player.data.ctheloAlignments.alignment
 
     local menu = tes3ui.findMenu("MenuStat")
     if menu then
@@ -99,10 +98,10 @@ local function createAlignmentStat(e)
     alignmentValueBlock.widthProportional = 1.0
 
     local alignmentValueLabel = alignmentValueBlock:createLabel{ id = alignmentValueLabelId,  text = "None" }
-    if selectedAlignmentId == "none" then
+    if tes3.player.data.ctheloAlignments == nil then
         alignmentValueLabel.text = "None"
     else
-        local selectedAlignment = alignmentsTable[selectedAlignmentId]
+        local selectedAlignment = tes3.player.data.ctheloAlignments.alignment
         alignmentValueLabel.text = selectedAlignment.name
     end
     alignmentValueLabel.wrapText = true
@@ -203,6 +202,9 @@ local function createAlignmentMenu(e)
     okayButton:register("mouseClick", function()
         alignmentMenu:destroy()
         tes3ui.leaveMenuMode()
+        tes3.player.data.ctheloAlignments = {
+            alignment = alignmentsTable[selectedAlignmentId]
+        }
     end)
 
     alignmentMenu:updateLayout()
