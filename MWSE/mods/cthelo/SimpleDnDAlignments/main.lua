@@ -161,3 +161,4 @@ local function createAlignmentMenu(e)
     alignmentMenu:updateLayout()
     tes3ui.enterMenuMode(alignmentMenuID)
 end
+event.register("charGenFinished", createAlignmentMenu)
