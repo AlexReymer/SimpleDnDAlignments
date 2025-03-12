@@ -25,8 +25,14 @@ local alignmentsTable = {
     }
 }
 
+local selectedAlignmentId = "none"
+
 local function createAlignmentTooltip()
-    local alignment = alignmentsTable["lawfulGood"]
+    if selectedAlignmentId == "none" then
+        return
+    end
+
+    local selectedAlignment = alignmentsTable[selectedAlignmentId]
 
     local tooltip = tes3ui.createTooltipMenu()
     local outerBlock = tooltip:createBlock()
@@ -39,14 +45,14 @@ local function createAlignmentTooltip()
     outerBlock.autoHeight = true
 
     local header = outerBlock:createLabel{
-        text = alignment.name
+        text = selectedAlignment.name
     }
     header.absolutePosAlignX = 0.5
     header.color = tes3ui.getPalette("header_color")
 
 
     local description = outerBlock:createLabel{
-        text = alignment.description
+        text = selectedAlignment.description
     }
     description.autoHeight = true
     description.width = 285
@@ -56,6 +62,10 @@ local function createAlignmentTooltip()
 end
 
 local function updateAlignmentStat()
+    if selectedAlignmentId == "none" then
+        return
+    end
+
     local menu = tes3ui.findMenu("MenuStat")
     if menu then
         local alignmentValueLabel = menu:findChild(alignmentValueLabelId)
@@ -67,6 +77,11 @@ end
 event.register("menuEnter", updateAlignmentStat)
 
 local function createAlignmentStat(e)
+    if selectedAlignmentId == "none" then
+        return
+    end
+
+    local selectedAlignment = alignmentsTable[selectedAlignmentId]
 
     local menu = e.element
     local charBlock = menu:findChild("MenuStat_level_layout").parent
@@ -87,7 +102,7 @@ local function createAlignmentStat(e)
     alignmentValueBlock.widthProportional = 1.0
 
     local alignmentValueLabel = alignmentValueBlock:createLabel{ id = alignmentValueLabelId,  text = "None" }
-    alignmentValueLabel.text = "True Neutral"
+    alignmentValueLabel.text = selectedAlignment.name
     alignmentValueLabel.wrapText = true
     alignmentValueLabel.widthProportional = 1
     alignmentValueLabel.justifyText = "right"
@@ -101,10 +116,12 @@ end
 event.register("uiActivated", createAlignmentStat, { filter = "MenuStat" })
 
 local function alignmentClickHandler(alignment)
-    local label = tes3ui.findMenu(perksMenuID):findChild(alignmentDescriptionLabelId)
+    selectedAlignmentId = alignment.id
+    
+    local label = tes3ui.findMenu(alignmentMenuID):findChild(alignmentDescriptionLabelId)
     label.text = alignment.name
 
-    local description = tes3ui.findMenu(perksMenuID):findChild(alignmentalignmentDescriptionTextId)
+    local description = tes3ui.findMenu(alignmentMenuID):findChild(alignmentDescriptionTextId)
     description.text = alignment.description
     
     description:updateLayout()
