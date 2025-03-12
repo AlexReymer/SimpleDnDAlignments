@@ -2,13 +2,14 @@ local alignmentBlockId = "GUI_MenuStat_CharacterAlignment_Stat"
 local alignmentValueLabelId = "AlignmentValueLabel"
 local alignmentMenuId = "AlignmentSelectionMenu"
 local alignmentDescriptionLabelId = "AlignmentDescriptionBlockLabel"
-local alignmentalignmentDescriptionTextId = "AlignmentDescriptionBlockText"
+local alignmentDescriptionTextId = "AlignmentDescriptionBlockText"
 
 local alignmentsTable = {
     ["lawfulGood"] = {
         id = "lawfulGood",
         name = "Lawful Good",
-        description = ("A lawful good character typically acts with compassion and always with honor " ..
+        description = (
+            "A lawful good character typically acts with compassion and always with honor " ..
             "and a sense of duty. However, lawful good characters will often regret taking any action " ..
             "they fear would violate their code, even if they recognize such action as being good."
         )
@@ -16,7 +17,8 @@ local alignmentsTable = {
     ["neutralGood"] = {
         id = "neutralGood",
         name = "Neutral Good",
-        description = ("A neutral good character typically acts altruistically, without regard for or " .. 
+        description = (
+            "A neutral good character typically acts altruistically, without regard for or " .. 
             "against lawful precepts such as rules or tradition. A neutral good character has no problems " .. 
             "with cooperating with lawful officials, but does not feel beholden to them. In the event that " ..
             "doing the right thing requires the bending or breaking of rules, they do not suffer the same " ..
@@ -65,11 +67,12 @@ local function updateAlignmentStat()
     if selectedAlignmentId == "none" then
         return
     end
+    local selectedAlignment = alignmentsTable[selectedAlignmentId]
 
     local menu = tes3ui.findMenu("MenuStat")
     if menu then
         local alignmentValueLabel = menu:findChild(alignmentValueLabelId)
-        alignmentValueLabel.text = "True Neutral"
+        alignmentValueLabel.text = selectedAlignment.name
         
         menu:updateLayout()
     end
@@ -77,12 +80,6 @@ end
 event.register("menuEnter", updateAlignmentStat)
 
 local function createAlignmentStat(e)
-    if selectedAlignmentId == "none" then
-        return
-    end
-
-    local selectedAlignment = alignmentsTable[selectedAlignmentId]
-
     local menu = e.element
     local charBlock = menu:findChild("MenuStat_level_layout").parent
 
@@ -102,7 +99,12 @@ local function createAlignmentStat(e)
     alignmentValueBlock.widthProportional = 1.0
 
     local alignmentValueLabel = alignmentValueBlock:createLabel{ id = alignmentValueLabelId,  text = "None" }
-    alignmentValueLabel.text = selectedAlignment.name
+    if selectedAlignmentId == "none" then
+        alignmentValueLabel.text = "None"
+    else
+        local selectedAlignment = alignmentsTable[selectedAlignmentId]
+        alignmentValueLabel.text = selectedAlignment.name
+    end
     alignmentValueLabel.wrapText = true
     alignmentValueLabel.widthProportional = 1
     alignmentValueLabel.justifyText = "right"
@@ -117,11 +119,11 @@ event.register("uiActivated", createAlignmentStat, { filter = "MenuStat" })
 
 local function alignmentClickHandler(alignment)
     selectedAlignmentId = alignment.id
-    
-    local label = tes3ui.findMenu(alignmentMenuID):findChild(alignmentDescriptionLabelId)
+
+    local label = tes3ui.findMenu(alignmentMenuId):findChild(alignmentDescriptionLabelId)
     label.text = alignment.name
 
-    local description = tes3ui.findMenu(alignmentMenuID):findChild(alignmentDescriptionTextId)
+    local description = tes3ui.findMenu(alignmentMenuId):findChild(alignmentDescriptionTextId)
     description.text = alignment.description
     
     description:updateLayout()
