@@ -1,3 +1,5 @@
+require("cthelo.SimpleDnDAlignments.MCM")
+
 local alignmentBlockId = "GUI_MenuStat_CharacterAlignment_Stat"
 local alignmentValueLabelId = "AlignmentValueLabel"
 local alignmentMenuId = "AlignmentSelectionMenu"
@@ -203,7 +205,7 @@ local function alignmentClickHandler(alignment)
     description:updateLayout()
 end
 
-local function createAlignmentMenu(e)
+function createAlignmentMenu(e)
     if not tes3.player then
         logger:error("No player, can't create perk menu")
         return
