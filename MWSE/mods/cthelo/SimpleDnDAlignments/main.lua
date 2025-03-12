@@ -25,6 +25,36 @@ local alignmentsTable = {
     }
 }
 
+local function createAlignmentTooltip()
+    local alignment = alignmentsTable["lawfulGood"]
+
+    local tooltip = tes3ui.createTooltipMenu()
+    local outerBlock = tooltip:createBlock()
+    outerBlock.flowDirection = "top_to_bottom"
+    outerBlock.paddingTop = 6
+    outerBlock.paddingBottom = 12
+    outerBlock.paddingLeft = 6
+    outerBlock.paddingRight = 6
+    outerBlock.width = 400
+    outerBlock.autoHeight = true
+
+    local header = outerBlock:createLabel{
+        text = alignment.name
+    }
+    header.absolutePosAlignX = 0.5
+    header.color = tes3ui.getPalette("header_color")
+
+
+    local description = outerBlock:createLabel{
+        text = alignment.description
+    }
+    description.autoHeight = true
+    description.width = 285
+    description.wrapText = true
+
+    tooltip:updateLayout()
+end
+
 local function updateAlignmentStat()
     local menu = tes3ui.findMenu("MenuStat")
     if menu then
@@ -62,10 +92,9 @@ local function createAlignmentStat(e)
     alignmentValueLabel.widthProportional = 1
     alignmentValueLabel.justifyText = "right"
 
-
-    alignmentBlockLabel:register("help", createBGTooltip )
-    alignmentValueBlock:register("help", createBGTooltip )
-    alignmentValueLabel:register("help", createBGTooltip )
+    alignmentBlockLabel:register("help", createAlignmentTooltip)
+    alignmentValueBlock:register("help", createAlignmentTooltip)
+    alignmentValueLabel:register("help", createAlignmentTooltip)
 
     menu:updateLayout()
 end
@@ -87,7 +116,6 @@ local function createAlignmentMenu(e)
         return
     end
 
-    config.persistent.currentBackground = config.persistent.currentBackground or "none"
     local alignmentMenu = tes3ui.createMenu{ id = alignmentMenuId, fixedFrame = true }
     local alignmentMenuBlock = alignmentMenu:createBlock()
     alignmentMenuBlock.flowDirection = "top_to_bottom"
