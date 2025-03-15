@@ -3,7 +3,7 @@ local config = {}
 
 config.configPath = "SimpleDnDAlignments"
 
----@class DnDAlignments.Config.mcm
+---@class DnDAlignments.Config.mcmDefault
 config.mcmDefault = {
     ---@type boolean mod toggle
     enableAlignments = true,
@@ -13,3 +13,5 @@ config.mcmDefault = {
 
 ---@type CharacterBackgrounds.Config.mcm
 config.mcm = mwse.loadConfig(config.configPath, config.mcmDefault)
+
+return config

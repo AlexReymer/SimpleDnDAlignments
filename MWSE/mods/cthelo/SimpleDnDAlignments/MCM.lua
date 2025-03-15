@@ -1,11 +1,10 @@
 local config = require("cthelo.SimpleDnDAlignments.config")
 
-local mcm
 local function registerMCM()
-    mcm = mwse.mcm.createmcm("Simple D&D Alignments")
+    local template = mwse.mcm.createmcm("Simple D&D Alignments")
 
-    mcm:saveOnClose(config.configPath, config.mcm)
-    local page = mcm:createSideBarPage("Settings")
+    template:saveOnClose(config.configPath, config.mcm)
+    local page = template:createSideBarPage("Settings")
 
     local sideBarText = (
         "Adds a simple alignment system, select your alignment after character creation " ..
@@ -46,6 +45,6 @@ local function registerMCM()
         }
     }
 
-    mcm:register()
+    template:register()
 end
 event.register("modConfigReady", registerMCM)
