@@ -11,9 +11,10 @@ config.mcmDefault = {
     alignmentType = "Classic"
 }
 
----@type CharacterBackgrounds.Config.mcm
+---@type DnDAlignments.Config.mcm
 config.mcm = mwse.loadConfig(config.configPath, config.mcmDefault)
 
+---@type DnDAlignments.Config.alignmentsTable
 config.alignmentsTable = {
     ["lawfulGood"] = {
         id = "lawfulGood",
@@ -109,9 +110,10 @@ config.alignmentsTable = {
             "much regard for the lives or freedom of other people. Chaotic evil characters do not work well in groups " ..
             "because they resent being given orders and usually do not behave themselves unless there is no alternative."
         )
-    },
+    }
 }
 
+---@type DnDAlignments.Config.expandedAlignments
 config.expandedAlignments = {
     ["Social Good"] = {
         id = "socialGood",
@@ -208,7 +210,7 @@ config.expandedAlignments = {
         order = 23,
         name = "Rebel Evil",
         description = {}
-    },
+    }
 }
 
 return config

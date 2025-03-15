@@ -1,7 +1,7 @@
 local config = require("cthelo.SimpleDnDAlignments.config")
 
 local function registerMCM()
-    local template = mwse.mcm.createmcm("Simple D&D Alignments")
+    local template = mwse.mcm.createTemplate("Simple D&D Alignments")
 
     template:saveOnClose(config.configPath, config.mcm)
     local page = template:createSideBarPage("Settings")
