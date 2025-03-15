@@ -1,4 +1,5 @@
 require("cthelo.SimpleDnDAlignments.MCM")
+local config = require("cthelo.SimpleDnDAlignments.config")
 
 local alignmentBlockId = "GUI_MenuStat_CharacterAlignment_Stat"
 local alignmentValueLabelId = "AlignmentValueLabel"
@@ -6,105 +7,7 @@ local alignmentMenuId = "AlignmentSelectionMenu"
 local alignmentDescriptionLabelId = "AlignmentDescriptionBlockLabel"
 local alignmentDescriptionTextId = "AlignmentDescriptionBlockText"
 
-local alignmentsTable = {
-    ["lawfulGood"] = {
-        id = "lawfulGood",
-        order = 0,
-        name = "Lawful Good",
-        description = (
-            "A lawful good character typically acts with compassion and always with honor " ..
-            "and a sense of duty. However, lawful good characters will often regret taking any action " ..
-            "they fear would violate their code, even if they recognize such action as being good."
-        )
-    },
-    ["neutralGood"] = {
-        id = "neutralGood",
-        order = 2,
-        name = "Neutral Good",
-        description = (
-            "A neutral good character typically acts altruistically, without regard for or " .. 
-            "against lawful precepts such as rules or tradition. A neutral good character has no problems " .. 
-            "with cooperating with lawful officials, but does not feel beholden to them. In the event that " ..
-            "doing the right thing requires the bending or breaking of rules, they do not suffer the same " ..
-            "inner conflict that a lawful good character would."
-        )
-    },
-    ["chaoticGood"] = {
-        id = "chaoticGood",
-        order = 4,
-        name = "Chaotic Good",
-        description = (
-            "A chaotic good character does whatever is necessary to bring about change for the better, " .. 
-            "disdains bureaucratic organizations that get in the way of social improvement, and places a " ..
-            "high value on personal freedom, not only for oneself but for others as well. Chaotic good " ..
-            "characters usually intend to do the right thing, but their methods are generally disorganized " ..
-            "and often out of sync with the rest of society."
-        )
-    },
-    ["lawfulNeutral"] = {
-        id = "lawfulNeutral",
-        order = 10,
-        name = "Lawful Neutral",
-        description = (
-            "A lawful neutral character typically believes strongly in lawful concepts such as honor, order, " ..
-            "rules, and tradition, but often follows a personal code in addition to, or even in preference to, " ..
-            "one set down by a benevolent authority."
-        )
-    },
-    ["trueNeutral"] = {
-        id = "trueNeutral",
-        order = 12,
-        name = "True Neutral",
-        description = (
-            "A true neutral character is neutral on both axes and tends not to feel strongly towards any alignment, " ..
-            "or actively seeks their balance."
-        )
-    },
-    ["chaoticNeutral"] = {
-        id = "chaoticNeutral",
-        order = 14,
-        name = "Chaotic Neutral",
-        description = (
-            "A chaotic neutral character is an individualist who follows their own heart and generally shirks rules and " ..
-            "traditions. Although chaotic neutral characters promote the ideals of freedom, it is their own freedom that " ..
-            "comes first; good and evil come second to their need to be free."
-        )
-    },
-    ["lawfulEvil"] = {
-        id = "lawfulEvil",
-        order = 20,
-        name = "Lawful Evil",
-        description = (
-            "A lawful evil character sees a well-ordered system as being necessary to fulfill their own personal wants" ..
-            " and needs, using these systems to further their power and influence."
-        )
-    },
-    ["neutralEvil"] = {
-        id = "neutralEvil",
-        order = 22,
-        name = "Neutral Evil",
-        description = (
-            "A neutral evil character is typically selfish and has no qualms about turning on allies-of-the-moment, and " ..
-            " usually makes allies primarily to further their own goals. A neutral evil character has no compunctions " ..
-            "about harming others to get what they want, but neither will they go out of their way to cause carnage or " ..
-            "mayhem when they see no direct benefit for themselves. Another valid interpretation of neutral evil holds " ..
-            "up evil as an ideal, doing evil for evil's sake and trying to spread its influence."
-        )
-    },
-    ["chaoticEvil"] = {
-        id = "chaoticEvil",
-        order = 24,
-        name = "Chaotic Evil",
-        description = (
-            "A chaotic evil character tends to have no respect for rules, other people's lives, or anything but their own " ..
-            "desires, which are typically selfish and cruel. They set a high value on personal freedom, but do not have " ..
-            "much regard for the lives or freedom of other people. Chaotic evil characters do not work well in groups " ..
-            "because they resent being given orders and usually do not behave themselves unless there is no alternative."
-        )
-    },
-}
-
-local selectedAlignmentId = "none"
+local playerAlignment
 
 local function createAlignmentTooltip()
     if tes3.player.data.ctheloAlignments == nil then
@@ -194,7 +97,7 @@ end
 event.register("uiActivated", createAlignmentStat, { filter = "MenuStat" })
 
 local function alignmentClickHandler(alignment)
-    selectedAlignmentId = alignment.id
+    playerAlignment = alignment
 
     local label = tes3ui.findMenu(alignmentMenuId):findChild(alignmentDescriptionLabelId)
     label.text = alignment.name
@@ -234,7 +137,14 @@ function createAlignmentMenu(e)
     alignmentListBlock.paddingAllSides = 4
     alignmentListBlock.borderRight = 6
 
-    local sortedAlignments = table.values(alignmentsTable, function(a, b) return a.order < b.order end)
+    -- Check if the player is using expanded alignments, if so merge them into the alignments table
+    local mergedAlignments = config.alignmentsTable
+    if config.mcm.alignmentType == "Expanded" then
+        for key,alignment in pairs(config.expandedAlignments) do 
+            mergedAlignments[key] = alignment 
+        end
+    end
+    local sortedAlignments = table.values(mergedAlignments, function(a, b) return a.order < b.order end)
 
     for _, alignment in pairs(sortedAlignments) do
         local alignmentButton = alignmentListBlock:createTextSelect{ id = "alignmentButton", text = alignment.name }
@@ -282,7 +192,7 @@ function createAlignmentMenu(e)
         alignmentMenu:destroy()
         tes3ui.leaveMenuMode()
         tes3.player.data.ctheloAlignments = {
-            alignment = alignmentsTable[selectedAlignmentId]
+            alignment = playerAlignment
         }
     end)
 
